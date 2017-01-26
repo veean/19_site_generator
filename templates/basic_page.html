@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+		</script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+		</script>
+	</head>
+	<body>
+		<div class="panel panel-default" style="background: #faf9f9">
+			<div class="container">
+				<div class="panel-body">
+					<p class="pull-right panel-title"><a href="https://devman.org/encyclopedia/">Энциклопедия</a><p>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="col-md-8 col-md-offset-2">
+				<h1>{{ title }}</h1>
+					{{ html }}
+			</div>
+			<div>
+				<span class="label label-default">{{ topic }}</span>
+			</div>
+		</div>
+		<div style="height: 60px;">
+		</div>
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container">
+				<div class="col-sm-12 text-center navbar-text">
+					<a href="https://devman.org">DEVMAN.ORG</a>
+				</div>
+			</div>
+		</nav>
+	</body>
+</html>
