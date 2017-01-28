@@ -31,7 +31,6 @@ def prepare_site_structure():
 
 def extract_md_to_html(md_filepath):
     if os.path.exists(md_filepath):
-        # extentions = ['codehilite', 'fenced_code']
         with open(md_filepath, 'r', encoding='utf-8') as md:
             return markdown.markdown(md.read(), output_format='html5', extentions=['codehilite', 'fenced_code'])
 
@@ -60,12 +59,12 @@ def create_articles_pages(config):
 
 def create_index_page(config):
     index_page_name = 'index.html'
+    articles_dir = 'articles'
     jinja_with_settings = prepare_jinja_env(TEMPLATE_ROOT)
     template_file = jinja_with_settings.get_template(TEMPLATE_INDEX)
     path_to_store_index = os.path.join(SITE_ROOT, index_page_name)
     for article in config['articles']:
-        # article['source_for_index'] = os.path.join(SITE_ROOT, article['source'].replace('.md', '.html'))
-        article['source_for_index'] = article['source'].replace('.md', '.html')
+        article['source_for_index'] = os.path.join(articles_dir, article['source'].replace('.md', '.html'))
     save_generated_html(config, path_to_store_index, template_file)
 
 
