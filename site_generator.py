@@ -1,7 +1,9 @@
+from urllib.parse import quote
 import markdown
 import argparse
 import jinja2
 import json
+import sys
 import os
 
 
@@ -10,6 +12,8 @@ TEMPLATE_ROOT = 'templates'
 TEMPLATE_INDEX = 'template_index.html'
 TEMPLATE_BASIC = 'template_article.html'
 SITE_ARTICLES = 'site/articles'
+ARTICLES_DIR = 'articles/'
+INDEX_PAGE_NAME = 'index.html'
 
 
 def get_config_file(filepath):
@@ -19,11 +23,10 @@ def get_config_file(filepath):
 
 
 def prepare_site_structure():
-    raw_articles = 'articles'
     if not os.path.exists(SITE_ROOT):
         os.makedirs(SITE_ROOT)
 
-    for article in os.scandir(raw_articles):
+    for article in os.scandir(ARTICLES_DIR):
         article_dir = os.path.join(SITE_ARTICLES, article.name)
         if not os.path.exists(article_dir):
             os.makedirs(article_dir)
@@ -47,24 +50,24 @@ def prepare_jinja_env(templates_destination):
 
 
 def create_articles_pages(config):
-    articles_dir = 'articles'
     jinja_with_settings = prepare_jinja_env(TEMPLATE_ROOT)
     template_article = jinja_with_settings.get_template(TEMPLATE_BASIC)
     for article in config['articles']:
-        md_to_extract = os.path.join(articles_dir, article['source'])
-        path_to_save_html = os.path.join(SITE_ARTICLES, article['source'].replace('.md', '.html'))
+        md_to_extract = os.path.join(ARTICLES_DIR, article['source'])
+        without_extention, _ = os.path.splitext(article['source'])
+        path_to_save_html = os.path.join(SITE_ARTICLES, '{}.html'.format(without_extention))
         article['text'] = extract_md_to_html(md_to_extract)
         save_generated_html(article, path_to_save_html, template_article)
 
 
 def create_index_page(config):
-    index_page_name = 'index.html'
-    articles_dir = 'articles'
+
     jinja_with_settings = prepare_jinja_env(TEMPLATE_ROOT)
     template_file = jinja_with_settings.get_template(TEMPLATE_INDEX)
-    path_to_store_index = os.path.join(SITE_ROOT, index_page_name)
+    path_to_store_index = os.path.join(SITE_ROOT, INDEX_PAGE_NAME)
     for article in config['articles']:
-        article['source_for_index'] = os.path.join(articles_dir, article['source'].replace('.md', '.html'))
+        without_extention, _ = os.path.splitext(article['source'])
+        article['source_for_index'] = quote(os.path.join(ARTICLES_DIR, '{}.html'.format(without_extention)))
     save_generated_html(config, path_to_store_index, template_file)
 
 
@@ -79,5 +82,5 @@ if __name__ == '__main__':
         create_index_page(site_structure)
         create_articles_pages(site_structure)
         print('Static site generating successfully completed!')
-    except FileNotFoundError:
-        print('Something wrong with specified config parameter!')
+    except (FileNotFoundError, FileExistsError):
+        sys.exit(1)
